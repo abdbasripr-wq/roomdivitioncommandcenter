@@ -1,0 +1,56 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'Admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'Admin'",
+        ".validate": "newData.hasChildren(['email', 'name', 'role', 'createdAt'])"
+      }
+    },
+    "uploads": {
+      "$uploadId": {
+        ".read": "auth !== null",
+        ".write": "auth !== null",
+        ".validate": "newData.hasChildren(['module', 'reportType', 'uploadedByUid'])"
+      }
+    },
+    "rows": {
+      "$uploadId": {
+        ".read": "auth !== null",
+        ".write": "root.child('uploads').child($uploadId).child('uploadedByUid').val() === auth.uid",
+        "$rowId": {
+          ".validate": "newData.hasChildren(['rowIndex'])"
+        }
+      }
+    },
+    "analyticsSnapshots": {
+      ".read": "auth !== null",
+      ".write": "auth !== null",
+      "$snapshotId": {
+        ".validate": "newData.hasChildren(['scope', 'createdAt'])"
+      }
+    },
+    "alerts": {
+      ".read": "auth !== null",
+      ".write": "auth !== null",
+      "$alertId": {
+        ".validate": "newData.hasChildren(['severity', 'title', 'timestamp'])"
+      }
+    },
+    "roomDivition": {
+      "unexpectedCosts": {
+        ".read": "auth !== null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'RDM')",
+        ".write": "auth !== null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'RDM')",
+        "$id": {
+          ".validate": "newData.hasChildren(['date', 'department', 'amount', 'createdAt'])"
+        }
+      }
+    },
+    "settings": {
+      "global": {
+        ".read": "auth !== null",
+        ".write": "auth !== null && root.child('users').child(auth.uid).child('role').val() === 'Admin'"
+      }
+    }
+  }
+}
